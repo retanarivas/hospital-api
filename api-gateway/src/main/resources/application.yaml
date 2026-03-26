@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: api-gateway
+  # Check this section specifically!
+  # If you have 'config: something' instead of 'config: import:', it will fail.
+  config:
+    import: "optional:configserver:http://localhost:8888"
