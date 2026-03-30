@@ -1,7 +1,27 @@
 spring:
   application:
     name: api-gateway
-  # Check this section specifically!
-  # If you have 'config: something' instead of 'config: import:', it will fail.
-  config:
-    import: "optional:configserver:http://localhost:8888"
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: doctor-service
+              uri: http://localhost:8001
+              predicates:
+                - Path=/api/v1/doctors/**
+
+server:
+  port: 8765
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+logging:
+  level:
+    org.springframework.cloud.gateway: TRACE
+    org.springframework.http.server.reactive: DEBUG
+    org.springframework.web.reactive: DEBUG
+
