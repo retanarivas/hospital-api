@@ -1,5 +1,10 @@
 server:
-  port: 8765
+  port: 8001
+
+spring:
+  cloud:
+    discovery:
+      enabled: true
 
 eureka:
   client:
