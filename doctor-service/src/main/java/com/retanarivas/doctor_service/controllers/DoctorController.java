@@ -1,26 +1,44 @@
 package com.retanarivas.doctor_service.controllers;
 
-import com.retanarivas.doctor_service.models.Doctor;
-import lombok.Builder;
+import com.retanarivas.doctor_service.dto.DoctorDTO;
+import com.retanarivas.doctor_service.services.DoctorService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/doctors")
 public class DoctorController {
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Doctor> getDoctorById(@PathVariable Long id) {
-        Doctor doctor = Doctor.builder()
-                .id(id)
-                .name("Mayra")
-                .lastName("Enriquez")
-                .email("enriquez@gmail.com")
-                .build();
+    @Autowired
+    private DoctorService doctorService;
 
-        return ResponseEntity.ok(doctor);
+    @GetMapping
+    ResponseEntity<List<DoctorDTO>> getAllDoctors() {
+        return ResponseEntity.ok(doctorService.getAllDoctors());
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<DoctorDTO> getDoctorById(@PathVariable Long id) {
+        return ResponseEntity.ok(doctorService.getDoctorById(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<DoctorDTO> saveDoctor(@RequestBody DoctorDTO doctorDTO) {
+        return new ResponseEntity<>(doctorService.saveDoctor(doctorDTO), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<DoctorDTO> updateDoctor(@RequestBody DoctorDTO doctorDTO, @PathVariable Long id) {
+        return ResponseEntity.ok(doctorService.updateDoctor(doctorDTO, id));
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteDoctorById(@PathVariable Long id) {
+        doctorService.deleteDoctorById(id);
+    }
+
 }
