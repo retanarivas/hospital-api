@@ -1,4 +1,4 @@
-package com.retanarivas.doctor_service.exceptions;
+package com.retanarivas.common.exceptions;
 
 public class BadRequestException extends RuntimeException{
     public BadRequestException(String message) {

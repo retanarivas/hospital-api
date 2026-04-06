@@ -1,6 +1,6 @@
 package com.retanarivas.doctor_service.controllers;
 
-import com.retanarivas.doctor_service.dto.ApiResponse;
+import com.retanarivas.common.response.ApiResponse;
 import com.retanarivas.doctor_service.dto.DoctorDTO;
 import com.retanarivas.doctor_service.services.DoctorService;
 import org.springframework.beans.factory.annotation.Autowired;

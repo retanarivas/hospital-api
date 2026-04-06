@@ -1,13 +1,12 @@
 package com.retanarivas.doctor_service.services.impl;
 
+import com.retanarivas.common.exceptions.BadRequestException;
+import com.retanarivas.common.exceptions.ResourceNotFoundException;
 import com.retanarivas.doctor_service.dto.DoctorDTO;
-import com.retanarivas.doctor_service.exceptions.BadRequestException;
-import com.retanarivas.doctor_service.exceptions.ResourceNotFoundException;
 import com.retanarivas.doctor_service.models.Doctor;
 import com.retanarivas.doctor_service.repositories.DoctorRepository;
 import com.retanarivas.doctor_service.services.DoctorService;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.internal.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

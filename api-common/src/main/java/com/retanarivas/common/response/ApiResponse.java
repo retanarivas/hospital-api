@@ -1,4 +1,4 @@
-package com.retanarivas.doctor_service.dto;
+package com.retanarivas.common.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;

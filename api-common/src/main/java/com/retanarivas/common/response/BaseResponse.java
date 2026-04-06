@@ -1,4 +1,4 @@
-package com.retanarivas.doctor_service.dto;
+package com.retanarivas.common.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
