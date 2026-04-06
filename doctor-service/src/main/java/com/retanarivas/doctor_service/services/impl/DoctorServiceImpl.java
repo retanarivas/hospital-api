@@ -1,10 +1,13 @@
 package com.retanarivas.doctor_service.services.impl;
 
 import com.retanarivas.doctor_service.dto.DoctorDTO;
+import com.retanarivas.doctor_service.exceptions.BadRequestException;
+import com.retanarivas.doctor_service.exceptions.ResourceNotFoundException;
 import com.retanarivas.doctor_service.models.Doctor;
 import com.retanarivas.doctor_service.repositories.DoctorRepository;
 import com.retanarivas.doctor_service.services.DoctorService;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.internal.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +34,7 @@ public class DoctorServiceImpl implements DoctorService {
     public DoctorDTO getDoctorById(Long id) {
         return doctorRepository.findById(id)
                 .map(doctor -> modelMapper.map(doctor, DoctorDTO.class))
-                .orElse(null);
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id: " + id));
     }
 
     @Override
@@ -62,12 +65,18 @@ public class DoctorServiceImpl implements DoctorService {
             doctorRepository.save(doctor);
             return modelMapper.map(doctor, DoctorDTO.class);
         }
-        return null;
+        throw new ResourceNotFoundException("Doctor not found with id: " + id);
     }
 
     @Override
     public void deleteDoctorById(Long id) {
+        if (id == null) {
+            throw new BadRequestException("ID cannot be null");
+        }
+
         doctorRepository.findById(id)
-                .ifPresent(doctor -> doctorRepository.delete(doctor));
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id: " + id));
+
+        doctorRepository.deleteById(id);
     }
 }
