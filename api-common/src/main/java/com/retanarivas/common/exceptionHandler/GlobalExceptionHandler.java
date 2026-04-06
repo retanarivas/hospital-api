@@ -1,6 +1,8 @@
-package com.retanarivas.doctor_service.exceptions;
+package com.retanarivas.common.exceptionHandler;
 
-import com.retanarivas.doctor_service.dto.ApiResponse;
+import com.retanarivas.common.exceptions.BadRequestException;
+import com.retanarivas.common.exceptions.ResourceNotFoundException;
+import com.retanarivas.common.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

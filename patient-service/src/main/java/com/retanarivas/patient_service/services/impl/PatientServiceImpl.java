@@ -1,5 +1,7 @@
 package com.retanarivas.patient_service.services.impl;
 
+import com.retanarivas.common.exceptions.BadRequestException;
+import com.retanarivas.common.exceptions.ResourceNotFoundException;
 import com.retanarivas.patient_service.dto.PatientDTO;
 import com.retanarivas.patient_service.models.Patient;
 import com.retanarivas.patient_service.repositories.PatientRepository;
@@ -31,7 +33,7 @@ public class PatientServiceImpl implements PatientService {
     public PatientDTO getPatientById(Long id) {
         return patientRepository.findById(id)
                 .map(patient -> modelMapper.map(patient, PatientDTO.class))
-                .orElse(null);
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with id " + id));
     }
 
     @Override
@@ -70,11 +72,16 @@ public class PatientServiceImpl implements PatientService {
 
             return modelMapper.map(patientRepository.save(patient), PatientDTO.class);
         }
-        return null;
+        throw new ResourceNotFoundException("Patient not found with id: " + id);
     }
 
     @Override
     public void deletePatient(Long id) {
-        patientRepository.findById(id).ifPresent(patient -> patientRepository.delete(patient));
+        if (id == null)
+            throw new BadRequestException("ID cannot be null");
+        patientRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id: " + id));
+
+        patientRepository.deleteById(id);
     }
 }

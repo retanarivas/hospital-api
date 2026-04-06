@@ -1,4 +1,4 @@
-package com.retanarivas.doctor_service.exceptions;
+package com.retanarivas.common.exceptions;
 
 public class ResourceNotFoundException extends RuntimeException{
     public ResourceNotFoundException(String message) {
