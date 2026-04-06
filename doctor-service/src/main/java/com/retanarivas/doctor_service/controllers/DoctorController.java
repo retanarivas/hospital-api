@@ -1,5 +1,6 @@
 package com.retanarivas.doctor_service.controllers;
 
+import com.retanarivas.doctor_service.dto.ApiResponse;
 import com.retanarivas.doctor_service.dto.DoctorDTO;
 import com.retanarivas.doctor_service.services.DoctorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,28 +18,40 @@ public class DoctorController {
     private DoctorService doctorService;
 
     @GetMapping
-    ResponseEntity<List<DoctorDTO>> getAllDoctors() {
-        return ResponseEntity.ok(doctorService.getAllDoctors());
+    ResponseEntity<ApiResponse<List<DoctorDTO>>> getAllDoctors() {
+        return ResponseEntity.ok(
+                ApiResponse.success(HttpStatus.OK.value(), "Success", doctorService.getAllDoctors())
+        );
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DoctorDTO> getDoctorById(@PathVariable Long id) {
-        return ResponseEntity.ok(doctorService.getDoctorById(id));
+    public ResponseEntity<ApiResponse<DoctorDTO>> getDoctorById(@PathVariable Long id) {
+        return ResponseEntity.ok(
+                ApiResponse.success(HttpStatus.OK.value(), "Success", doctorService.getDoctorById(id))
+        );
     }
 
     @PostMapping
-    public ResponseEntity<DoctorDTO> saveDoctor(@RequestBody DoctorDTO doctorDTO) {
-        return new ResponseEntity<>(doctorService.saveDoctor(doctorDTO), HttpStatus.CREATED);
+    public ResponseEntity<ApiResponse<DoctorDTO>> saveDoctor(@RequestBody DoctorDTO doctorDTO) {
+        return new ResponseEntity<>(
+                ApiResponse.success(HttpStatus.CREATED.value(), "Doctor created successfully", doctorService.saveDoctor(doctorDTO)),
+                HttpStatus.CREATED
+        );
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<DoctorDTO> updateDoctor(@RequestBody DoctorDTO doctorDTO, @PathVariable Long id) {
-        return ResponseEntity.ok(doctorService.updateDoctor(doctorDTO, id));
+    public ResponseEntity<ApiResponse<DoctorDTO>> updateDoctor(@RequestBody DoctorDTO doctorDTO, @PathVariable Long id) {
+        return ResponseEntity.ok(
+                ApiResponse.success(HttpStatus.OK.value(), "Doctor updated successfully", doctorService.updateDoctor(doctorDTO, id))
+        );
     }
 
     @DeleteMapping("/{id}")
-    public void deleteDoctorById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<DoctorDTO>> deleteDoctorById(@PathVariable Long id) {
         doctorService.deleteDoctorById(id);
+        return ResponseEntity.ok(
+                ApiResponse.success(HttpStatus.OK.value(), "Doctor deleted successfully", null)
+        );
     }
 
 }
