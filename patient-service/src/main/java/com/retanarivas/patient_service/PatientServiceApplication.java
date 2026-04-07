@@ -7,7 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@ComponentScan(basePackages = {"com.retanarivas.patient_service", "com.retanarivas"})
+@ComponentScan(basePackages = {"com.retanarivas.patient_service", "com.retanarivas.common"})
 public class PatientServiceApplication {
 
 	public static void main(String[] args) {
