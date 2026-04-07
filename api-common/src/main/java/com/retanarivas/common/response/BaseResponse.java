@@ -13,9 +13,11 @@ public class BaseResponse {
 
     private int status;
     private LocalDateTime timestamp;
+    private boolean success;
 
-    public BaseResponse(int status) {
+    public BaseResponse(int status, boolean success) {
         this.status = status;
+        this.success = success;
         this.timestamp = LocalDateTime.now();
     }
 

@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.util.stream.Collectors;
 
@@ -46,6 +47,16 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(
                 ApiResponse.error(HttpStatus.BAD_REQUEST.value(), "Validation Failed", errorMessage),
                 HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleNoHandlerFoundException(NoHandlerFoundException ex) {
+        String errorDetail = String.format("The path '%s' with method '%s' does not exist on this server.",
+                ex.getRequestURL(), ex.getHttpMethod());
+
+        return new ResponseEntity<>(
+                ApiResponse.error(HttpStatus.NOT_FOUND.value(), "Resource Not Found", errorDetail),
+                HttpStatus.NOT_FOUND);
     }
 
 }
