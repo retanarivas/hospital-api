@@ -28,11 +28,7 @@ public class Appointment {
     private AppointmentStatus appointmentStatus;
 
     private Long patientId;
-    private String patientName;
-    private String patientLastName;
 
     private Long doctorId;
-    private String doctorName;
-    private String doctorLastName;
 
 }

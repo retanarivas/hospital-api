@@ -1,5 +1,7 @@
 package com.retanarivas.appointment_service.dto;
 
+import com.retanarivas.appointment_service.dto.externalServices.doctorService.DoctorDTO;
+import com.retanarivas.appointment_service.dto.externalServices.patientService.PatientDTO;
 import com.retanarivas.appointment_service.enums.AppointmentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,11 +25,6 @@ public class AppointmentDTO {
 
     private AppointmentStatus appointmentStatus;
 
-    private Long patientId;
-    private String patientName;
-    private String patientLastName;
-
-    private Long doctorId;
-    private String doctorName;
-    private String doctorLastName;
+    private PatientDTO patient;
+    private DoctorDTO doctor;
 }
