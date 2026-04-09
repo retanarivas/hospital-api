@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/appointments")
 public class AppointmentController {
@@ -19,6 +21,16 @@ public class AppointmentController {
     @GetMapping("/{id}")
     public AppointmentDTO getAppointmentById(@PathVariable Long id) {
         return appointmentService.findAppointmentById(id);
+    }
+
+    @GetMapping("/doctor/{doctorId}")
+    public ResponseEntity<ApiResponse<List<AppointmentDTO>>> getAppointmentByDoctorId(@PathVariable Long doctorId) {
+        return new ResponseEntity<>(
+                ApiResponse.success(HttpStatus.OK.value(),
+                        "Appointment retrieved successfully",
+                        appointmentService.findAppointmentsByDoctorId(doctorId)),
+                HttpStatus.OK
+        );
     }
 
     @PostMapping

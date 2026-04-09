@@ -15,6 +15,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class AppointmentServiceImpl implements AppointmentService {
 
@@ -34,29 +36,35 @@ public class AppointmentServiceImpl implements AppointmentService {
     public AppointmentDTO findAppointmentById(Long id) {
         return appointmentRepository.findById(id)
                 .map(appointment -> modelMapper.map(appointment, AppointmentDTO.class))
-                .orElseThrow(() -> new RuntimeException("Appointment not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found with id: " + id));
+    }
+
+    @Override
+    public List<AppointmentDTO> findAppointmentsByDoctorId(Long doctorId) {
+        DoctorDTO doctor = getDoctorById(doctorId);
+
+        List<Appointment> appointments = appointmentRepository.findAppointmentsByDoctorId(doctor.getId());
+
+        if (appointments.isEmpty()) {
+            throw new ResourceNotFoundException("No appointments found for doctor id: " + doctorId);
+        }
+
+        return appointments.stream()
+                .map(appointment -> modelMapper.map(appointment, AppointmentDTO.class))
+                .toList();
     }
 
     @Override
     public AppointmentDTO createAppointment(CreateAppointmentDTO createAppointmentDTO) {
         // Implement the logic to create a new appointment
         // 1- Call patient-service to check if the patient exist (use OpenFeign to make the call)
-        ApiResponse<PatientDTO> patientServiceResponse = patientClient.getPatientById(createAppointmentDTO.getPatientId());
-        if(!patientServiceResponse.isSuccess()) {
-            throw new ResourceNotFoundException("Patient not found with id: " + createAppointmentDTO.getPatientId());
-        }
+        PatientDTO patient = getPatientById(createAppointmentDTO.getPatientId());
 
         // 2- Call doctor-service to check if the doctor exist (use OpenFeign to make the call)
-        ApiResponse<DoctorDTO> doctorServiceResponse = doctorClient.getDoctorById(createAppointmentDTO.getDoctorId());
-        if(!doctorServiceResponse.isSuccess()) {
-            throw new ResourceNotFoundException("Doctor not found with id: " + createAppointmentDTO.getDoctorId());
-        }
-
-        System.out.println("doctorDTO = " + patientServiceResponse.getData());
-        System.out.println("patientDTO = " + doctorServiceResponse.getData());
+        DoctorDTO doctor = getDoctorById(createAppointmentDTO.getDoctorId());
 
         // 3- set doctorId and patientId if data exist
-        if (patientServiceResponse.getData().getId() == null && doctorServiceResponse.getData().getId() == null) {
+        if (patient.getId() == null && doctor.getId() == null) {
             createAppointmentDTO.setPatientId(createAppointmentDTO.getPatientId());
             createAppointmentDTO.setDoctorId(createAppointmentDTO.getDoctorId());
         }
@@ -65,9 +73,28 @@ public class AppointmentServiceImpl implements AppointmentService {
         Appointment createdAppointment = appointmentRepository.save(modelMapper.map(createAppointmentDTO, Appointment.class));
         AppointmentDTO appointmentDTO = modelMapper.map(createdAppointment, AppointmentDTO.class);
 
-        appointmentDTO.setPatient(patientServiceResponse.getData());
-        appointmentDTO.setDoctor(doctorServiceResponse.getData());
+        appointmentDTO.setPatient(patient);
+        appointmentDTO.setDoctor(doctor);
 
         return appointmentDTO;
     }
+
+    private DoctorDTO getDoctorById(Long doctorId) {
+        ApiResponse<DoctorDTO> doctorServiceResponse = doctorClient.getDoctorById(doctorId);
+
+        if(!doctorServiceResponse.isSuccess()) {
+            throw new ResourceNotFoundException("Doctor not found with id: " + doctorId);
+        }
+        return doctorServiceResponse.getData();
+    }
+
+    private PatientDTO getPatientById(Long patientId) {
+        ApiResponse<PatientDTO> patientServiceResponse = patientClient.getPatientById(patientId);
+
+        if(!patientServiceResponse.isSuccess()) {
+            throw new ResourceNotFoundException("Patient not found with id: " + patientId);
+        }
+        return patientServiceResponse.getData();
+    }
+
 }
