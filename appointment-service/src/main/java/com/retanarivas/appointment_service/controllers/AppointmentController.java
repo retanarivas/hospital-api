@@ -1,12 +1,13 @@
 package com.retanarivas.appointment_service.controllers;
 
 import com.retanarivas.appointment_service.dto.AppointmentDTO;
+import com.retanarivas.appointment_service.dto.CreateAppointmentDTO;
 import com.retanarivas.appointment_service.services.AppointmentService;
+import com.retanarivas.common.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/appointments")
@@ -18,6 +19,16 @@ public class AppointmentController {
     @GetMapping("/{id}")
     public AppointmentDTO getAppointmentById(@PathVariable Long id) {
         return appointmentService.findAppointmentById(id);
+    }
+
+    @PostMapping
+    public ResponseEntity<ApiResponse<AppointmentDTO>> createAppointment(@RequestBody CreateAppointmentDTO createAppointmentDTO) {
+        return new ResponseEntity<>(
+                ApiResponse.success(HttpStatus.CREATED.value(),
+                        "Appointment created successfully",
+                        appointmentService.createAppointment(createAppointmentDTO)),
+                HttpStatus.CREATED
+        );
     }
 
 }
