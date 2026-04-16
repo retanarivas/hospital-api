@@ -2,6 +2,7 @@ package com.retanarivas.common.exceptionHandler;
 
 import com.retanarivas.common.exceptions.BadRequestException;
 import com.retanarivas.common.exceptions.ResourceNotFoundException;
+import com.retanarivas.common.exceptions.ServiceUnavailableException;
 import com.retanarivas.common.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -57,6 +58,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(
                 ApiResponse.error(HttpStatus.NOT_FOUND.value(), "Resource Not Found", errorDetail),
                 HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ServiceUnavailableException.class)
+    public ResponseEntity<ApiResponse<Void>> handleExternalServiceUnavailable(ServiceUnavailableException ex) {
+        return new ResponseEntity<>(
+                ApiResponse.error(HttpStatus.SERVICE_UNAVAILABLE.value(), "Service Unavailable", ex.getMessage()),
+                HttpStatus.SERVICE_UNAVAILABLE);
     }
 
 }

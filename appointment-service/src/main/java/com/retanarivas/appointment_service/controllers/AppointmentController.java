@@ -4,6 +4,7 @@ import com.retanarivas.appointment_service.dto.AppointmentDTO;
 import com.retanarivas.appointment_service.dto.CreateAppointmentDTO;
 import com.retanarivas.appointment_service.services.AppointmentService;
 import com.retanarivas.common.response.ApiResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/appointments")
+@Slf4j
 public class AppointmentController {
 
     @Autowired

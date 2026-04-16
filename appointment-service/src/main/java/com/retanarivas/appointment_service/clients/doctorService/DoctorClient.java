@@ -1,4 +1,4 @@
-package com.retanarivas.appointment_service.clients;
+package com.retanarivas.appointment_service.clients.doctorService;
 
 import com.retanarivas.appointment_service.dto.externalServices.doctorService.DoctorDTO;
 import com.retanarivas.common.response.ApiResponse;

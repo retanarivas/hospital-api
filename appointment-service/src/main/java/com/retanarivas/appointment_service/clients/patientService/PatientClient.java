@@ -1,9 +1,8 @@
-package com.retanarivas.appointment_service.clients;
+package com.retanarivas.appointment_service.clients.patientService;
 
 import com.retanarivas.appointment_service.dto.externalServices.patientService.PatientDTO;
 import com.retanarivas.common.response.ApiResponse;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 

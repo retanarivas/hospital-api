@@ -1,7 +1,7 @@
 package com.retanarivas.appointment_service.services.impl;
 
-import com.retanarivas.appointment_service.clients.DoctorClient;
-import com.retanarivas.appointment_service.clients.PatientClient;
+import com.retanarivas.appointment_service.clients.doctorService.DoctorClientWrapper;
+import com.retanarivas.appointment_service.clients.patientService.PatientClientWrapper;
 import com.retanarivas.appointment_service.dto.AppointmentDTO;
 import com.retanarivas.appointment_service.dto.CreateAppointmentDTO;
 import com.retanarivas.appointment_service.dto.externalServices.doctorService.DoctorDTO;
@@ -10,7 +10,7 @@ import com.retanarivas.appointment_service.models.Appointment;
 import com.retanarivas.appointment_service.repositories.AppointmentRepository;
 import com.retanarivas.appointment_service.services.AppointmentService;
 import com.retanarivas.common.exceptions.ResourceNotFoundException;
-import com.retanarivas.common.response.ApiResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Slf4j
 public class AppointmentServiceImpl implements AppointmentService {
 
     @Autowired
@@ -27,10 +28,10 @@ public class AppointmentServiceImpl implements AppointmentService {
     private ModelMapper modelMapper;
 
     @Autowired
-    private PatientClient patientClient;
+    private PatientClientWrapper patientWrapper;
 
     @Autowired
-    DoctorClient doctorClient;
+    private DoctorClientWrapper doctorWrapper;
 
     @Override
     public AppointmentDTO findAppointmentById(Long id) {
@@ -41,7 +42,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public List<AppointmentDTO> findAppointmentsByDoctorId(Long doctorId) {
-        DoctorDTO doctor = getDoctorById(doctorId);
+        DoctorDTO doctor = doctorWrapper.getDoctorById(doctorId);
 
         List<Appointment> appointments = appointmentRepository.findAppointmentsByDoctorId(doctor.getId());
 
@@ -50,7 +51,11 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
 
         return appointments.stream()
-                .map(appointment -> modelMapper.map(appointment, AppointmentDTO.class))
+                .map(appointment -> {
+                    AppointmentDTO appointmentDTO = modelMapper.map(appointment, AppointmentDTO.class);
+                    appointmentDTO.setDoctor(doctor);
+                    return appointmentDTO;
+                })
                 .toList();
     }
 
@@ -58,10 +63,10 @@ public class AppointmentServiceImpl implements AppointmentService {
     public AppointmentDTO createAppointment(CreateAppointmentDTO createAppointmentDTO) {
         // Implement the logic to create a new appointment
         // 1- Call patient-service to check if the patient exist (use OpenFeign to make the call)
-        PatientDTO patient = getPatientById(createAppointmentDTO.getPatientId());
+        PatientDTO patient = patientWrapper.getPatientById(createAppointmentDTO.getPatientId());
 
         // 2- Call doctor-service to check if the doctor exist (use OpenFeign to make the call)
-        DoctorDTO doctor = getDoctorById(createAppointmentDTO.getDoctorId());
+        DoctorDTO doctor = doctorWrapper.getDoctorById(createAppointmentDTO.getDoctorId());
 
         // 3- set doctorId and patientId if data exist
         if (patient.getId() == null && doctor.getId() == null) {
@@ -77,24 +82,6 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointmentDTO.setDoctor(doctor);
 
         return appointmentDTO;
-    }
-
-    private DoctorDTO getDoctorById(Long doctorId) {
-        ApiResponse<DoctorDTO> doctorServiceResponse = doctorClient.getDoctorById(doctorId);
-
-        if(!doctorServiceResponse.isSuccess()) {
-            throw new ResourceNotFoundException("Doctor not found with id: " + doctorId);
-        }
-        return doctorServiceResponse.getData();
-    }
-
-    private PatientDTO getPatientById(Long patientId) {
-        ApiResponse<PatientDTO> patientServiceResponse = patientClient.getPatientById(patientId);
-
-        if(!patientServiceResponse.isSuccess()) {
-            throw new ResourceNotFoundException("Patient not found with id: " + patientId);
-        }
-        return patientServiceResponse.getData();
     }
 
 }

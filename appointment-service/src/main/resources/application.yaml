@@ -31,5 +31,38 @@ eureka:
     service-url:
       defaultZone: http://localhost:8761/eureka/
 
+# actuator configuration Actuator
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  health:
+    db:
+      enabled: true
+    circuitbreakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
+
+# Circuit Breaker configuration using Resilience4j
+resilience4j:
+    circuitbreaker:
+        instances:
+            doctor-service:
+                registerHealthIndicator: true
+                eventConsumerBufferSize: 10
+                failureRateThreshold: 50
+                minimumNumberOfCalls: 5
+                automaticTransitionFromOpenToHalfOpenEnabled: true
+                waitDurationInOpenState: 5s
+                permittedNumberOfCallsInHalfOpenState: 3
+                slidingWindowSize: 10
+                slidingWindowType: COUNT_BASED
+
 
 # ddl-auto: update crea o actualiza las tablas automáticamente basándose en tus entidades
